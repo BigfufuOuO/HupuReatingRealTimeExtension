@@ -24,7 +24,7 @@
     "content_scripts": [
         {
             "matches": ["*://live.bilibili.com/*", "*://*.mozilla.org/*", "*://*.baidu.com/*"],
-            "js": ["show_score.js", "fetch_score.js"],
+            "js": ["show_score.js", "fetch_data.js"],
             "css": ["styles.css"]
         }
     ],
