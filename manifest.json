@@ -1,0 +1,38 @@
+{
+    "manifest_version": 3,
+    "name": "虎扑实时评分",
+    "version": "0.1.0",
+
+    "description": "Show the real-time score of the game on hupu",
+
+    "icons": {
+        "48": "images/border-48.png"
+    },
+
+    "permissions": [
+        "activeTab"
+    ],
+
+    "host_permissions": [
+        "<all_urls>"
+    ],
+
+    "background": {
+        "service_worker": "background.js"
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["*://live.bilibili.com/*", "*://*.mozilla.org/*", "*://*.baidu.com/*"],
+            "js": ["show_score.js", "fetch_score.js"],
+            "css": ["styles.css"]
+        }
+    ],
+
+    "web_accessible_resources": [
+        {
+            "resources": ["table.html"],
+            "matches": ["<all_urls>"]
+        }
+    ]
+}

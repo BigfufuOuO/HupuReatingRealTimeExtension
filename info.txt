@@ -1,0 +1,5 @@
+ https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bpl/score_tree/getCurAndSubNodeByBizKey?relation=CHILD&page=1&pageSize=10&outBizNo=1707&outBizType=lol_match
+ https://bbsactivity.hupu.com/pc-viewer/index.html?t=https%3A%2F%2Fm.hupu.com%2Fscore%2Fdetail.html%3FoutBizType%3Dlol_match%26outBizNo%3D1708
+
+ 赛程:
+ https://match-api.hupu.com/1/8.0.97/matchallapi/bff/standard/getTabDetailScheduleList?categoryType=common&enType=lol&direction=current&crt=1728116238614&night=0
