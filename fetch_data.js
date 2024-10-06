@@ -158,20 +158,22 @@ async function getScoreDisplay(matchDisplayArray) {
         matchInfo.matchId = match.matchId;
         let startTimeStamp = new Date(Number(match.matchStartTimeStamp));
         matchInfo.startTime = startTimeStamp.toLocaleString();
+        matchInfo.memberInfos = memberInfos;
         // url格式：https://match-api.hupu.com/1/8.0.97/matchallapi/liveTabList?matchId=631577583222784&matchType=lol&crt=1728134786227
         const MatchIdApiUrl = "https://match-api.hupu.com/1/8.0.97/matchallapi/liveTabList?matchType=lol&matchId=" + match.matchId + "&crt=" + Date.now();
-        // 获取评分入口BizId
-        // sendAndRecieve(MatchIdApiUrl).then((response) => {
+        
+        // 根据赛程得到BizId
         var responseMatchId = await sendAndRecieve(MatchIdApiUrl);
         const BizId = getBizId(responseMatchId);
+        matchInfo.BizId = BizId;
         if (BizId == "0") {
             //发起未处理错误
             ScoreDisplayArray.push(matchInfo);
             continue;
         }
+
+        //获取比赛评分入口
         const MatchBizUrl = "https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bpl/score_tree/getSelfByBizKey?outBizType=lol_match&outBizNo=" + BizId;
-        //获取比赛Biz
-        // sendAndRecieve(MatchBizUrl).then((response) => {
         var responseBizId = await sendAndRecieve(MatchBizUrl);
         const gameBoScores = await getGameBoScore(responseBizId, memberInfos);
         matchInfo.gameBoScores = gameBoScores;
@@ -190,8 +192,11 @@ function getTableHTML(url, documentName) {
 
 function updateContent(scoreDisplayArray) {
     let title = scoreDisplayArray[0].title;
-    title += scoreDisplayArray[0].gameBoScores[0].groupName + " vs " + scoreDisplayArray[0].gameBoScores[1].groupName;
+    title += scoreDisplayArray[0].memberInfos[0].memberName + " vs " + scoreDisplayArray[0].memberInfos[1].memberName;
     document.getElementById('caption-current-game').textContent = title;
+    titleUrl = "https://m.hupu.com/score/detail.html?outBizType=lol_match&outBizNo=" + scoreDisplayArray[0].BizId;
+    document.getElementById('caption-current-game').href = titleUrl;
+
     document.getElementById('team-1').textContent = scoreDisplayArray[0].gameBoScores[0].groupName;
     document.getElementById('team-2').textContent = scoreDisplayArray[0].gameBoScores[1].groupName;
 
@@ -222,8 +227,6 @@ function updateContent(scoreDisplayArray) {
     document.getElementById('team-2-player-adc-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[3].node.scoreAvg;
     document.getElementById('team-2-player-support-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[4].node.scoreAvg;
     document.getElementById('team-2-player-coach-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[5].node.scoreAvg;
-
-
 }
 
 
