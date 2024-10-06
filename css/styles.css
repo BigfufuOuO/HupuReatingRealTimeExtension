@@ -7,7 +7,6 @@
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    font-size: 16px;
     color: black;
     font-family: Arial, sans-serif;
     cursor: move; 
@@ -19,15 +18,24 @@
 }
 
 .floating-table th, .floating-table td {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
+    padding: 6px;
+    font-size: 12px;
 }
 
 .floating-table th {
+    text-align: center;
     background-color: #f2f2f2;
+}
+
+.floating-table td {
+    border: 1px solid #dddddd;
+    text-align: left;
 }
 
 .floating-table tr:nth-child(even) {
     background-color: #f9f9f9;
+}
+
+.floating-table caption{
+    font-size: 14px;
 }

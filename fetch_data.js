@@ -140,7 +140,12 @@ async function getGameBoScore(responseMatch, memberInfos) {
                 const GroupScoreData = responseSubGroup.data.nodePageResult.data;
                 const GroupScoreDict = {};
                 GroupScoreDict.groupName = GroupName;
-                GroupScoreDict.groupScore = GroupScoreData;
+                GroupScoreDict.groupScore = []
+                for (let j = 0; j < GroupScoreData.length; j++) {
+                    if (GroupScoreData[j].node.infoJson.type[0] != "bpHero") {
+                        GroupScoreDict.groupScore.push(GroupScoreData[j]);
+                    }
+                }
                 gameBoScores.push(GroupScoreDict);
             }
         }
@@ -159,6 +164,7 @@ async function getScoreDisplay(matchDisplayArray) {
         let startTimeStamp = new Date(Number(match.matchStartTimeStamp));
         matchInfo.startTime = startTimeStamp.toLocaleString();
         matchInfo.memberInfos = memberInfos;
+        matchInfo.midGameStageInfo = match.midGameStageInfo.midGameStage;
         // url格式：https://match-api.hupu.com/1/8.0.97/matchallapi/liveTabList?matchId=631577583222784&matchType=lol&crt=1728134786227
         const MatchIdApiUrl = "https://match-api.hupu.com/1/8.0.97/matchallapi/liveTabList?matchType=lol&matchId=" + match.matchId + "&crt=" + Date.now();
         
@@ -191,11 +197,17 @@ function getTableHTML(url, documentName) {
 }
 
 function updateContent(scoreDisplayArray) {
-    let title = scoreDisplayArray[0].title;
-    title += scoreDisplayArray[0].memberInfos[0].memberName + " vs " + scoreDisplayArray[0].memberInfos[1].memberName;
+    let titleMain = scoreDisplayArray[0].title;
+    document.getElementById('current-title').textContent = titleMain;
+    let title = "";
+    title += scoreDisplayArray[0].memberInfos[0].memberName + " "; 
+    title += scoreDisplayArray[0].memberInfos[0].memberBaseScore + "-";
+    title += scoreDisplayArray[0].memberInfos[1].memberBaseScore + " ";
+    title += scoreDisplayArray[0].memberInfos[1].memberName;
+    title += "(" + scoreDisplayArray[0].midGameStageInfo + ")";
     document.getElementById('caption-current-game').textContent = title;
     titleUrl = "https://m.hupu.com/score/detail.html?outBizType=lol_match&outBizNo=" + scoreDisplayArray[0].BizId;
-    document.getElementById('caption-current-game').href = titleUrl;
+    document.getElementById('link-game').setAttribute('href', titleUrl);
 
     document.getElementById('team-1').textContent = scoreDisplayArray[0].gameBoScores[0].groupName;
     document.getElementById('team-2').textContent = scoreDisplayArray[0].gameBoScores[1].groupName;
