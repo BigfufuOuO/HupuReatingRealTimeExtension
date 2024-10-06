@@ -1,19 +1,39 @@
-//获取当前时间
-const unixTimestamp = Date.now();
-//拼接url，进行fetch
-const url = "https://match-api.hupu.com/1/8.0.97/matchallapi/bff/standard/getTabDetailScheduleList?categoryType=common&enType=lol&direction=current&crt=" + unixTimestamp;
-//根据url发送CORS
-chrome.runtime.sendMessage({ 
-    action: "makeCORSrequest",
-    url: url,
-    data: null
-}, function(response) {
-    //处理返回的数据
-    const matchDisplayArray = getGameInfo(response);
-    
-});
+/*
+NOTE:
+    1.在英文语境中，match指的是一场系列赛，例如一整个bo5。game指的是一局比赛，即bo5中的一局。下文中
+        比赛代指match，对局代指game。
+*/
 
-function getGameInfo(response) {
+
+
+/*
+sendAndRecieve: 发送请求并接收返回的数据.
+url: 请求的url
+return: 一个Promise对象，resolve的参数为返回的数据。
+*/
+async function sendAndRecieve(url) {
+    if (typeof browser == "undefined") {
+        //在浏览器中运行
+        browser = chrome;
+    }
+    return new Promise((resolve, reject) => {
+    browser.runtime.sendMessage({ 
+        action: "makeCORSrequest",
+        url: url,
+        }, function(response) {
+            //处理返回的数据
+            resolve(response);
+        });
+    });
+}
+
+/*
+getMatchInfo: 获取系列比赛信息
+return: 一个数组，内容为需要展示的比赛信息。
+    如果当前有比赛正在进行，则返回正在进行的比赛；
+    如果当前没有比赛正在进行，则返回最近结束的比赛，以及下一场比赛。
+*/
+function getMatchInfo(response) {
     //处理返回的schedule数据
     const schedule_days = response.result.dayGameData;
     const matchCompeletd = [];
@@ -48,20 +68,127 @@ function getGameInfo(response) {
             matchDisplay.push(matchNotstarted[0]);
         }
         //否则无比赛
+        else {
+            //发起未处理错误
+            throw new Error("No match data.");
+        }
     }
     else {
+        //返回正在进行的比赛。
         return matchOnprogress;
     }
-
+    //返回最近结束的比赛和下一场比赛
     return matchDisplay;
 }
 
-function getScoreDisplay(matchDisplayArray) {
-    const ScoreDisplayArray = [];
-    for (let i = 0; i < matchDisplayArray.length; i++) {
-        const match = matchDisplayArray[i];
-        const matchInfo = {};
-        matchInfo.title = match.matchInfo;
-        
+/*
+getBizId: 获取评分入口BizId. BizId是评分入口的唯一标识符。
+response: 比赛信息的返回数据
+*/
+function getBizId(response) {
+    const categories = response.result.categoryList;
+    var link = "";
+    for (let i = 0; i < categories.length; i++) {
+        const category = categories[i];
+        if (category.categoryId == "live_score") {
+            link = category.link;
+            break;
+        }
+    }
+    //格式：https://offline-download.hupu.com/online/prod/310016/match.html?outBizType=lol_match&outBizNo=1711&gameType=lol&matchId=631577583222784
+    //如果存在outBizNo，则返回outBizNo
+    if (link.indexOf("outBizNo") == -1) {
+        //发起未处理错误
+        console.log("No outBizNo in link. Please check if it's not in progress.");
+        return "0";
+    }
+    else {
+        //找到outBizNo
+        const outBizNo = link.split("outBizNo=")[1].split("&")[0];
+        return outBizNo;
     }
 }
+
+async function getGameBoScore(responseMatch, memberInfos) {
+    // 处理memberInfos
+    const teams = [];
+    for (let i = 0; i < memberInfos.length; i++) {
+        teams.push(memberInfos[i].memberName);
+    }
+
+    const gameBoGroup = responseMatch.data.subNodes;
+    if (gameBoGroup.length == 0) {
+        //发起未处理错误
+        alert("No gameBoGroup.");
+        return;
+    }
+    else {
+        const gameBoBizId = gameBoGroup[gameBoGroup.length - 1].outBizNo;
+        // 获取subGroup
+        const gameBoSubGroupUrl = "https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bpl/score_tree/getSubGroups?outBizType=lol_bo&outBizNo=" + gameBoBizId;
+        const gameBoScores = [];
+        // sendAndRecieve(gameBoSubGroupUrl).then((response) => {
+        let response = await sendAndRecieve(gameBoSubGroupUrl);
+        const gameBoSubGroups = response.data;
+        for (let i = 0; i < gameBoSubGroups.length; i++) {
+            if (teams.includes(gameBoSubGroups[i].groupName)) {
+                const nodeId = gameBoSubGroups[i].rootNodeId;
+                const SGnodePageUrl = "https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bff/bpl/score_tree/groupAndSubNodes?queryType=hot&nodeId=" + nodeId;
+                // sendAndRecieve(SGnodePageUrl).then((response) => {
+                let responseSubGroup = await sendAndRecieve(SGnodePageUrl);
+                const GroupName = responseSubGroup.data.groupInfo.name;
+                const GroupScoreData = responseSubGroup.data.nodePageResult.data;
+                const GroupScoreDict = {};
+                GroupScoreDict.groupName = GroupName;
+                GroupScoreDict.groupScore = GroupScoreData;
+                gameBoScores.push(GroupScoreDict);
+            }
+        }
+        return gameBoScores;
+    }
+}
+
+async function getScoreDisplay(matchDisplayArray) {
+    let ScoreDisplayArray = [];
+    for (let i = 0; i < matchDisplayArray.length; i++) {
+        const match = matchDisplayArray[i];
+        const memberInfos = match.againstInfo.memberInfos;
+        let matchInfo = {};
+        matchInfo.title = match.matchIntroduction;
+        matchInfo.matchId = match.matchId;
+        let startTimeStamp = new Date(Number(match.matchStartTimeStamp));
+        matchInfo.startTime = startTimeStamp.toLocaleString();
+        // url格式：https://match-api.hupu.com/1/8.0.97/matchallapi/liveTabList?matchId=631577583222784&matchType=lol&crt=1728134786227
+        const MatchIdApiUrl = "https://match-api.hupu.com/1/8.0.97/matchallapi/liveTabList?matchType=lol&matchId=" + match.matchId + "&crt=" + Date.now();
+        // 获取评分入口BizId
+        // sendAndRecieve(MatchIdApiUrl).then((response) => {
+        var responseMatchId = await sendAndRecieve(MatchIdApiUrl);
+        const BizId = getBizId(responseMatchId);
+        if (BizId == "0") {
+            //发起未处理错误
+            ScoreDisplayArray.push(matchInfo);
+            continue;
+        }
+        const MatchBizUrl = "https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bpl/score_tree/getSelfByBizKey?outBizType=lol_match&outBizNo=" + BizId;
+        //获取比赛Biz
+        // sendAndRecieve(MatchBizUrl).then((response) => {
+        var responseBizId = await sendAndRecieve(MatchBizUrl);
+        const gameBoScores = await getGameBoScore(responseBizId, memberInfos);
+        matchInfo.gameBoScores = gameBoScores;
+        ScoreDisplayArray.push(matchInfo);
+    }
+    return ScoreDisplayArray;
+}
+
+
+//获取当前时间
+const unixTimestamp = Date.now();
+//拼接url，进行fetch
+const url = "https://match-api.hupu.com/1/8.0.97/matchallapi/bff/standard/getTabDetailScheduleList?categoryType=common&enType=lol&direction=current&crt=" + unixTimestamp;
+//根据url发送CORS
+(async function() {
+    let responseUrl = await sendAndRecieve(url);
+    const matchDisplayArray = getMatchInfo(responseUrl);
+    const ScoreDisplayArray = await getScoreDisplay(matchDisplayArray);
+    console.log(ScoreDisplayArray);
+})();

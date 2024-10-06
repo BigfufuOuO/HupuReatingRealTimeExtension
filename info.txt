@@ -1,5 +1,17 @@
- https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bpl/score_tree/getCurAndSubNodeByBizKey?relation=CHILD&page=1&pageSize=10&outBizNo=1707&outBizType=lol_match
+ https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bpl/score_tree/getCurAndSubNodeByBizKey?relation=CHILD&page=1&pageSize=30&outBizNo=1707&outBizType=lol_match
  https://bbsactivity.hupu.com/pc-viewer/index.html?t=https%3A%2F%2Fm.hupu.com%2Fscore%2Fdetail.html%3FoutBizType%3Dlol_match%26outBizNo%3D1708
 
  赛程:
  https://match-api.hupu.com/1/8.0.97/matchallapi/bff/standard/getTabDetailScheduleList?categoryType=common&enType=lol&direction=current&crt=1728116238614&night=0
+
+ Biz入口：
+ https://match-api.hupu.com/1/8.0.97/matchallapi/liveTabList?matchId=631577583222784&matchType=lol&clientId=160156241&crt=1728134786227&night=0&channel=hupuupdate
+
+ match内的bo:
+ https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bpl/score_tree/getSelfByBizKey?outBizNo=1708&outBizType=lol_match
+
+ 获取subgroup:
+https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bpl/score_tree/getSubGroups?outBizNo=2655&outBizType=lol_bo
+
+获取每个group评分:
+https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bff/bpl/score_tree/groupAndSubNodes?nodeId=11612680&queryType=hot
