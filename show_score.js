@@ -1,15 +1,33 @@
-// Create a div element to hold the floating content
-const floatingTableDiv = document.createElement('div');
-floatingTableDiv.classList.add('floating-text'); // Add a class for styling
+// JavaScript to make the window draggable
+const draggableWindow = document.getElementById('score-board');
+let isDragging = false;
+let offsetX, offsetY;
 
-// Fetch the table HTML from the external file
-fetch(chrome.runtime.getURL('table.html'))
-    .then(response => response.text())
-    .then(data => {
-        // Insert the HTML content from table.html into the floating div
-        floatingTableDiv.innerHTML = data;
+draggableWindow.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - draggableWindow.offsetLeft;
+    offsetY = e.clientY - draggableWindow.offsetTop;
+});
 
-        // Append the div to the body
-        document.body.appendChild(floatingTableDiv);
-    })
-    .catch(error => console.error('Error loading the table:', error));
+document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+        draggableWindow.style.left = `${e.clientX - offsetX}px`;
+        draggableWindow.style.top = `${e.clientY - offsetY}px`;
+    }
+});
+
+document.addEventListener('mouseup', () => {
+    isDragging = false;
+});
+
+// Function to update the content of the window
+function updateContent(scoreDisplayArray) {
+    console.log(scoreDisplayArray);
+}
+
+// Example usage
+window.addEventListener('message', (event) => {
+    if (event.data.type === 'updateContent') {
+        updateContent(event.data.data);
+    }
+});

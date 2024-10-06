@@ -46,7 +46,7 @@ function getMatchInfo(response) {
             if (match[j].matchStatus == "COMPLETED") {
                 matchCompeletd.push(match[j]);
             }
-            else if (match[j].matchStatus == "ONPROGRESS") {
+            else if (match[j].matchStatus == "INPROGRESS") {
                 matchOnprogress.push(match[j]);
             }
             else {
@@ -180,15 +180,94 @@ async function getScoreDisplay(matchDisplayArray) {
     return ScoreDisplayArray;
 }
 
+function getTableHTML(url, documentName) {
+    fetch(chrome.runtime.getURL(url))
+        .then(response => response.text())
+        .then(data => {
+            documentName.innerHTML = data;
+        });
+}
 
-//获取当前时间
-const unixTimestamp = Date.now();
-//拼接url，进行fetch
-const url = "https://match-api.hupu.com/1/8.0.97/matchallapi/bff/standard/getTabDetailScheduleList?categoryType=common&enType=lol&direction=current&crt=" + unixTimestamp;
+function updateContent(scoreDisplayArray) {
+    let title = scoreDisplayArray[0].title;
+    title += scoreDisplayArray[0].gameBoScores[0].groupName + " vs " + scoreDisplayArray[0].gameBoScores[1].groupName;
+    document.getElementById('caption-current-game').textContent = title;
+    document.getElementById('team-1').textContent = scoreDisplayArray[0].gameBoScores[0].groupName;
+    document.getElementById('team-2').textContent = scoreDisplayArray[0].gameBoScores[1].groupName;
+
+    document.getElementById('team-1-player-top-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[0].node.name;
+    document.getElementById('team-1-player-jungle-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[1].node.name;
+    document.getElementById('team-1-player-mid-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[2].node.name;
+    document.getElementById('team-1-player-adc-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[3].node.name;
+    document.getElementById('team-1-player-support-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[4].node.name;
+
+    document.getElementById('team-2-player-top-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[0].node.name;
+    document.getElementById('team-2-player-jungle-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[1].node.name;
+    document.getElementById('team-2-player-mid-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[2].node.name;
+    document.getElementById('team-2-player-adc-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[3].node.name;
+    document.getElementById('team-2-player-support-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[4].node.name;
+
+    document.getElementById('team-1-player-top-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[0].node.scoreAvg;
+    document.getElementById('team-1-player-jungle-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[1].node.scoreAvg;
+    document.getElementById('team-1-player-mid-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[2].node.scoreAvg;
+    document.getElementById('team-1-player-adc-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[3].node.scoreAvg;
+    document.getElementById('team-1-player-support-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[4].node.scoreAvg;
+
+    document.getElementById('team-2-player-top-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[0].node.scoreAvg;
+    document.getElementById('team-2-player-jungle-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[1].node.scoreAvg;
+    document.getElementById('team-2-player-mid-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[2].node.scoreAvg;
+    document.getElementById('team-2-player-adc-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[3].node.scoreAvg;
+    document.getElementById('team-2-player-support-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[4].node.scoreAvg;
+}
+
+
+
 //根据url发送CORS
-(async function() {
+async function fetchAndUpdate() {
+    //获取当前时间
+    let unixTimestamp = Date.now();
+    //拼接url，进行fetch
+    let url = "https://match-api.hupu.com/1/8.0.97/matchallapi/bff/standard/getTabDetailScheduleList?categoryType=common&enType=lol&direction=current&crt=" + unixTimestamp;
     let responseUrl = await sendAndRecieve(url);
     const matchDisplayArray = getMatchInfo(responseUrl);
     const ScoreDisplayArray = await getScoreDisplay(matchDisplayArray);
     console.log(ScoreDisplayArray);
-})();
+
+    if (!document.getElementById('score-board')) {
+        const iframe = document.createElement('div');
+        iframe.classList.add('floating-text');
+        iframe.id = 'score-board';
+        getTableHTML('table.html', iframe);
+
+        document.body.appendChild(iframe);
+        let isDragging = false;
+        let offsetX, offsetY;
+        
+        iframe.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - iframe.offsetLeft;
+            offsetY = e.clientY - iframe.offsetTop;
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                iframe.style.left = `${e.clientX - offsetX}px`;
+                iframe.style.top = `${e.clientY - offsetY}px`;
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+    }
+    else {
+        updateContent(ScoreDisplayArray);
+    }
+}
+
+fetchAndUpdate();
+//3秒后更新数据
+setTimeout(fetchAndUpdate, 3000);
+
+
+setInterval(fetchAndUpdate, 10086);
