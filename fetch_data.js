@@ -164,7 +164,7 @@ async function getScoreDisplay(matchDisplayArray) {
         let startTimeStamp = new Date(Number(match.matchStartTimeStamp));
         matchInfo.startTime = startTimeStamp.toLocaleString();
         matchInfo.memberInfos = memberInfos;
-        matchInfo.midGameStageInfo = match.midGameStageInfo.midGameStage;
+        matchInfo.midGameStageInfo = match.matchStatusDesc;
         // url格式：https://match-api.hupu.com/1/8.0.97/matchallapi/liveTabList?matchId=631577583222784&matchType=lol&crt=1728134786227
         const MatchIdApiUrl = "https://match-api.hupu.com/1/8.0.97/matchallapi/liveTabList?matchType=lol&matchId=" + match.matchId + "&crt=" + Date.now();
         
