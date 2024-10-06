@@ -200,24 +200,30 @@ function updateContent(scoreDisplayArray) {
     document.getElementById('team-1-player-mid-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[2].node.name;
     document.getElementById('team-1-player-adc-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[3].node.name;
     document.getElementById('team-1-player-support-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[4].node.name;
+    document.getElementById('team-1-player-coach-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[5].node.name;
 
     document.getElementById('team-2-player-top-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[0].node.name;
     document.getElementById('team-2-player-jungle-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[1].node.name;
     document.getElementById('team-2-player-mid-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[2].node.name;
     document.getElementById('team-2-player-adc-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[3].node.name;
     document.getElementById('team-2-player-support-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[4].node.name;
+    document.getElementById('team-2-player-coach-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[5].node.name;
 
     document.getElementById('team-1-player-top-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[0].node.scoreAvg;
     document.getElementById('team-1-player-jungle-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[1].node.scoreAvg;
     document.getElementById('team-1-player-mid-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[2].node.scoreAvg;
     document.getElementById('team-1-player-adc-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[3].node.scoreAvg;
     document.getElementById('team-1-player-support-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[4].node.scoreAvg;
+    document.getElementById('team-1-player-coach-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[5].node.scoreAvg;
 
     document.getElementById('team-2-player-top-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[0].node.scoreAvg;
     document.getElementById('team-2-player-jungle-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[1].node.scoreAvg;
     document.getElementById('team-2-player-mid-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[2].node.scoreAvg;
     document.getElementById('team-2-player-adc-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[3].node.scoreAvg;
     document.getElementById('team-2-player-support-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[4].node.scoreAvg;
+    document.getElementById('team-2-player-coach-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[5].node.scoreAvg;
+
+
 }
 
 
