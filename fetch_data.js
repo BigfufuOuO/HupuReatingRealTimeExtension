@@ -123,7 +123,7 @@ async function getGameBoScore(responseMatch, memberInfos) {
         return;
     }
     else {
-        const gameBoBizId = gameBoGroup[gameBoGroup.length - 1].outBizNo;
+        const gameBoBizId = gameBoGroup[0].outBizNo;
         // 获取subGroup
         const gameBoSubGroupUrl = "https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bpl/score_tree/getSubGroups?outBizType=lol_bo&outBizNo=" + gameBoBizId;
         const gameBoScores = [];
