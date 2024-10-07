@@ -240,7 +240,7 @@ function updateContent(currentScore) {
             }
             else {
                 playerScorePosition.style.color = 'black';
-                trend = " =";
+                trend = "";
             }
             playerNamePosition.textContent = playerName;
             playerScorePosition.textContent = playerScore + trend;
