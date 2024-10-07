@@ -124,6 +124,7 @@ async function getGameBoScore(responseMatch, memberInfos) {
     }
     else {
         const gameBoBizId = gameBoGroup[0].outBizNo;
+        const gameBoNum = gameBoGroup[0].boNum;
         // 获取subGroup
         const gameBoSubGroupUrl = "https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bpl/score_tree/getSubGroups?outBizType=lol_bo&outBizNo=" + gameBoBizId;
         const gameBoScores = [];
@@ -140,7 +141,8 @@ async function getGameBoScore(responseMatch, memberInfos) {
                 const GroupScoreData = responseSubGroup.data.nodePageResult.data;
                 const GroupScoreDict = {};
                 GroupScoreDict.groupName = GroupName;
-                GroupScoreDict.groupScore = []
+                GroupScoreDict.groupScore = [];
+                GroupScoreDict.boNum = gameBoNum;
                 for (let j = 0; j < GroupScoreData.length; j++) {
                     if (GroupScoreData[j].node.infoJson.type[0] != "bpHero") {
                         GroupScoreDict.groupScore.push(GroupScoreData[j]);
@@ -206,12 +208,14 @@ function getCurrentScore(ScoreDisplayArray) {
 
 function updateContent(currentScore) {
     let titleMain = currentScore.title;
+    let boNum = currentScore.gameBoScores[0].boNum;
     document.getElementById('current-title').textContent = titleMain;
     let title = "";
     title += currentScore.memberInfos[0].memberName + " "; 
     title += currentScore.memberInfos[0].memberBaseScore + "-";
     title += currentScore.memberInfos[1].memberBaseScore + " ";
     title += currentScore.memberInfos[1].memberName;
+    title += " 第" + boNum + "局 ";
     title += "(" + currentScore.midGameStageInfo + ")";
     document.getElementById('caption-current-game').textContent = title;
     titleUrl = "https://m.hupu.com/score/detail.html?outBizType=lol_match&outBizNo=" + currentScore.BizId;
