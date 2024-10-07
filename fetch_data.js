@@ -133,7 +133,7 @@ async function getGameBoScore(responseMatch, memberInfos) {
         for (let i = 0; i < gameBoSubGroups.length; i++) {
             if (teams.includes(gameBoSubGroups[i].groupName)) {
                 const nodeId = gameBoSubGroups[i].rootNodeId;
-                const SGnodePageUrl = "https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bff/bpl/score_tree/groupAndSubNodes?queryType=hot&nodeId=" + nodeId;
+                const SGnodePageUrl = "https://games.mobileapi.hupu.com/1/8.0.1/bplcommentapi/bff/bpl/score_tree/groupAndSubNodes?queryType=score_high&nodeId=" + nodeId;
                 // sendAndRecieve(SGnodePageUrl).then((response) => {
                 let responseSubGroup = await sendAndRecieve(SGnodePageUrl);
                 const GroupName = responseSubGroup.data.groupInfo.name;
@@ -196,49 +196,64 @@ function getTableHTML(url, documentName) {
         });
 }
 
-function updateContent(scoreDisplayArray) {
-    let titleMain = scoreDisplayArray[0].title;
+
+/*
+返回需要查看的比赛信息 ::未完成::
+*/
+function getCurrentScore(ScoreDisplayArray) {
+    return ScoreDisplayArray[0];
+}
+
+function updateContent(currentScore) {
+    let titleMain = currentScore.title;
     document.getElementById('current-title').textContent = titleMain;
     let title = "";
-    title += scoreDisplayArray[0].memberInfos[0].memberName + " "; 
-    title += scoreDisplayArray[0].memberInfos[0].memberBaseScore + "-";
-    title += scoreDisplayArray[0].memberInfos[1].memberBaseScore + " ";
-    title += scoreDisplayArray[0].memberInfos[1].memberName;
-    title += "(" + scoreDisplayArray[0].midGameStageInfo + ")";
+    title += currentScore.memberInfos[0].memberName + " "; 
+    title += currentScore.memberInfos[0].memberBaseScore + "-";
+    title += currentScore.memberInfos[1].memberBaseScore + " ";
+    title += currentScore.memberInfos[1].memberName;
+    title += "(" + currentScore.midGameStageInfo + ")";
     document.getElementById('caption-current-game').textContent = title;
-    titleUrl = "https://m.hupu.com/score/detail.html?outBizType=lol_match&outBizNo=" + scoreDisplayArray[0].BizId;
+    titleUrl = "https://m.hupu.com/score/detail.html?outBizType=lol_match&outBizNo=" + currentScore.BizId;
     document.getElementById('link-game').setAttribute('href', titleUrl);
 
-    document.getElementById('team-1').textContent = scoreDisplayArray[0].gameBoScores[0].groupName;
-    document.getElementById('team-2').textContent = scoreDisplayArray[0].gameBoScores[1].groupName;
+    document.getElementById('team-1').textContent = currentScore.gameBoScores[0].groupName;
+    document.getElementById('team-2').textContent = currentScore.gameBoScores[1].groupName;
 
-    document.getElementById('team-1-player-top-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[0].node.name;
-    document.getElementById('team-1-player-jungle-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[1].node.name;
-    document.getElementById('team-1-player-mid-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[2].node.name;
-    document.getElementById('team-1-player-adc-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[3].node.name;
-    document.getElementById('team-1-player-support-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[4].node.name;
-    document.getElementById('team-1-player-coach-name').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[5].node.name;
+    /* 如果评分变高，字体变红*/
+    let positions = ['top', 'jungle', 'mid', 'adc', 'support', 'coach'];
+    for (let team = 1; team < 3; team++) {
+        for (let i = 0; i < 6; i++) {
+            let trend = "";
+            let position = positions[i];
+            let playerNamePosition = document.getElementById('team-' + team + '-player-' + position + '-name');
+            let playerScorePosition = document.getElementById('team-' + team + '-player-' + position + '-score');
+            let playerName = currentScore.gameBoScores[team - 1].groupScore[i].node.name;
+            let playerScore = currentScore.gameBoScores[team - 1].groupScore[i].node.scoreAvg;
+            if (playerScore > playerScorePosition.textContent) {
+                playerScorePosition.style.color = 'red';
+                trend = " ▲";
+            }
+            else if (playerScore < playerScorePosition.textContent) {
+                playerScorePosition.style.color = 'green';
+                trend = " ▼";
+            }
+            else {
+                playerScorePosition.style.color = 'black';
+                trend = " =";
+            }
+            playerNamePosition.textContent = playerName;
+            playerScorePosition.textContent = playerScore + trend;
+        }
+    }
+    
+}
 
-    document.getElementById('team-2-player-top-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[0].node.name;
-    document.getElementById('team-2-player-jungle-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[1].node.name;
-    document.getElementById('team-2-player-mid-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[2].node.name;
-    document.getElementById('team-2-player-adc-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[3].node.name;
-    document.getElementById('team-2-player-support-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[4].node.name;
-    document.getElementById('team-2-player-coach-name').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[5].node.name;
-
-    document.getElementById('team-1-player-top-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[0].node.scoreAvg;
-    document.getElementById('team-1-player-jungle-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[1].node.scoreAvg;
-    document.getElementById('team-1-player-mid-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[2].node.scoreAvg;
-    document.getElementById('team-1-player-adc-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[3].node.scoreAvg;
-    document.getElementById('team-1-player-support-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[4].node.scoreAvg;
-    document.getElementById('team-1-player-coach-score').textContent = scoreDisplayArray[0].gameBoScores[0].groupScore[5].node.scoreAvg;
-
-    document.getElementById('team-2-player-top-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[0].node.scoreAvg;
-    document.getElementById('team-2-player-jungle-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[1].node.scoreAvg;
-    document.getElementById('team-2-player-mid-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[2].node.scoreAvg;
-    document.getElementById('team-2-player-adc-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[3].node.scoreAvg;
-    document.getElementById('team-2-player-support-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[4].node.scoreAvg;
-    document.getElementById('team-2-player-coach-score').textContent = scoreDisplayArray[0].gameBoScores[1].groupScore[5].node.scoreAvg;
+/*
+对当前比赛的评分进行排序. 按照位置信息。
+ */
+function sortCurrentScore(currentScore) {
+    return ;
 }
 
 
@@ -253,6 +268,7 @@ async function fetchAndUpdate() {
     const matchDisplayArray = getMatchInfo(responseUrl);
     const ScoreDisplayArray = await getScoreDisplay(matchDisplayArray);
     console.log(ScoreDisplayArray);
+    const currentScore = getCurrentScore(ScoreDisplayArray);
 
     if (!document.getElementById('score-board')) {
         const iframe = document.createElement('div');
@@ -282,7 +298,7 @@ async function fetchAndUpdate() {
         });
     }
     else {
-        updateContent(ScoreDisplayArray);
+        updateContent(currentScore);
     }
 }
 
