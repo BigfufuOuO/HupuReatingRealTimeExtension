@@ -31,7 +31,7 @@
 
     "content_scripts": [
         {
-            "matches": ["*://live.bilibili.com/*", "*://*.mozilla.org/*", "*://*.baidu.com/*"],
+            "matches": ["*://live.bilibili.com/*", "*://*.mozilla.org/*", "*://www.baidu.com/*"],
             "js": ["fetch_data.js"],
             "css": ["css/styles.css"]
         }
