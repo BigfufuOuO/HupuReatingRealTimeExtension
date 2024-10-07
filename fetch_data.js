@@ -234,11 +234,11 @@ function updateContent(currentScore) {
             let playerScorePosition = document.getElementById('team-' + team + '-player-' + position + '-score');
             let playerName = currentScore.gameBoScores[team - 1].groupScore[i].node.name;
             let playerScore = currentScore.gameBoScores[team - 1].groupScore[i].node.scoreAvg;
-            if (playerScore > playerScorePosition.textContent) {
+            if (playerScore > playerScorePosition.textContent.split(" ")[0]) {
                 playerScorePosition.style.color = 'red';
                 trend = " ▲";
             }
-            else if (playerScore < playerScorePosition.textContent) {
+            else if (playerScore < playerScorePosition.textContent.split(" ")[0]) {
                 playerScorePosition.style.color = 'green';
                 trend = " ▼";
             }
