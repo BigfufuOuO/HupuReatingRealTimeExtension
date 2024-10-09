@@ -235,15 +235,16 @@ function updateContent(currentScore) {
             let playerName = currentScore.gameBoScores[team - 1].groupScore[i].node.name;
             let playerScore = currentScore.gameBoScores[team - 1].groupScore[i].node.scoreAvg;
             if (playerScore > playerScorePosition.textContent.split(" ")[0]) {
-                playerScorePosition.style.color = 'red';
+                playerScorePosition.style.color = 'rgba(255, 71, 71)';
                 trend = " ▲";
             }
             else if (playerScore < playerScorePosition.textContent.split(" ")[0]) {
-                playerScorePosition.style.color = 'green';
+                playerScorePosition.style.color = 'rgba(32, 200, 32)';
                 trend = " ▼";
             }
             else {
-                playerScorePosition.style.color = 'black';
+                //去除style属性
+                playerScorePosition.style.color = ''; 
                 trend = "";
             }
             playerNamePosition.textContent = playerName;
@@ -277,6 +278,7 @@ async function fetchAndUpdate() {
     if (!document.getElementById('score-board')) {
         const iframe = document.createElement('div');
         iframe.classList.add('floating-text');
+        iframe.setAttribute('theme', 'light');
         iframe.id = 'score-board';
         getTableHTML('table.html', iframe);
 

@@ -9,18 +9,33 @@
     margin: 2px 0px;
 }
 
-.floating-text {
+.floating-text[theme="light"] {
     position: fixed;
     top: 20px;
     left: 20px;
     z-index: 30000; /* Make sure the text is above all other elements */
-    background-color: rgba(255, 255, 255, 0.8); /* Optional background for better readability */
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
-    color: black;
     font-family: Arial, sans-serif;
     cursor: move; 
+    background-color: rgba(255, 255, 255, 0.8); /* Optional background for better readability */
+    color: black;
+}
+
+
+.floating-text[theme="dark"] {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 30000; /* Make sure the text is above all other elements */
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+    font-family: Arial, sans-serif;
+    cursor: move; 
+    background-color: rgba(0, 0, 0, 0.8); /* Optional background for better readability */
+    color: gainsboro;
 }
 
 .floating-table {
@@ -33,37 +48,39 @@
     font-size: 12px;
 }
 
-.floating-table th {
+.floating-text[theme="light"] .floating-table th {
     text-align: center;
     background-color: #f2f2f2;
 }
 
-.floating-table td {
+.floating-text[theme="dark"] .floating-table th {
+    text-align: center;
+    background-color: #333;
+}
+
+.floating-text[theme="light"] .floating-table td {
     border: 1px solid #dddddd;
     text-align: left;
 }
 
-.floating-table tr:nth-child(even) {
+.floating-text[theme="dark"] .floating-table td {
+    border: 1px solid #333;
+    text-align: left;
+}
+
+.floating-text[theme="light"] .floating-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-.floating-table caption{
+.floating-text[theme="dark"] .floating-table tr:nth-child(even) {
+    background-color: #444;
+}
+
+.floating-table caption {
     font-size: 14px;
 }
 
 .floating-table td[id*="score"] {
     font-weight: 600;
-}
-
-.dark-mode {
-    background-color: #333;
-}
-
-.dark-mode .floating-table th {
-    background-color: #444 !important;
-}
-
-.dark-mode .floating-table tr:nth-child(even) {
-    background-color: #555 !important;
 }
 
