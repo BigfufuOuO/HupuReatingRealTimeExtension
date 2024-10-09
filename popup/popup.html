@@ -1,0 +1,25 @@
+<html language="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <!meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; font-src 'self';">
+        <title>Popup</title>
+        <link rel="stylesheet" href="popup.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <script src="js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <h2>评分插件设置</h2>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between">
+                评分设置
+                <span class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="btnradio" id="setting-profile-light" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary btn-sm" for="setting-profile-light">白天</label>
+                    <input type="radio" class="btn-check" name="btnradio" id="setting-profile-black" autocomplete="off">
+                    <label class="btn btn-outline-dark btn-sm" for="setting-profile-black">夜间</label>
+                </span>
+            </li>
+        </ul>
+    </body>
+    <script src="popup.js"></script>
+</html>

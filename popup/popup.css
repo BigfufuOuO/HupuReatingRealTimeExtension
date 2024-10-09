@@ -1,34 +1,10 @@
-
-.floating-text {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 9999; /* Make sure the text is above all other elements */
-    background-color: rgba(255, 255, 255, 0.8); /* Optional background for better readability */
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    font-size: 16px;
-    color: black;
-    font-family: Arial, sans-serif;
-    cursor: pointer; /* Make it look clickable */
+html, body {
+    width: 300px;
+    padding: 5px;
 }
 
-.floating-table {
-    border-collapse: collapse;
-    width: 100%;
-}
 
-.floating-table th, .floating-table td {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
-
-.floating-table th {
-    background-color: #f2f2f2;
-}
-
-.floating-table tr:nth-child(even) {
-    background-color: #f9f9f9;
+.list-group-item {
+    justify-self: space-between;
+    align-items: center;
 }

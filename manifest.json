@@ -12,7 +12,8 @@
     "permissions": [
         "activeTab",
         "scripting",
-        "tabs"
+        "tabs",
+        "storage"
     ],
 
     "host_permissions": [
@@ -27,6 +28,7 @@
 
     "background": {
         "service_worker": "background.js"
+        
     },
 
     "content_scripts": [
