@@ -1,3 +1,4 @@
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -13,7 +14,7 @@
     position: fixed;
     top: 20px;
     left: 20px;
-    z-index: 30000; /* Make sure the text is above all other elements */
+    z-index: 2147483647; /* Make sure the text is above all other elements */
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);

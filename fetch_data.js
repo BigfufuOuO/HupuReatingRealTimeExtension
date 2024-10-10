@@ -302,6 +302,10 @@ async function fetchAndUpdate() {
         document.addEventListener('mouseup', () => {
             isDragging = false;
         });
+
+        document.addEventListener('fullscreenchange', () => {
+            console.log(document.fullscreenElement);
+        });
     }
     else {
         updateContent(currentScore);
