@@ -41,7 +41,7 @@
 
     "web_accessible_resources": [
         {
-            "resources": ["table.html", "show_score.js"],
+            "resources": ["table.html", "show_score.js", "js/dark_mode.js"],
             "matches": ["<all_urls>"]
         }
     ]

@@ -261,6 +261,14 @@ function sortCurrentScore(currentScore) {
     return ;
 }
 
+/* 注入js */
+function injectJavaScript(jsPath) {
+    jsPath = jsPath || 'js/inject.js';
+    var temp = document.createElement('script');
+    temp.setAttribute('type', 'text/javascript');
+    temp.src = chrome.runtime.getURL(jsPath);
+    document.body.appendChild(temp);
+}
 
 
 //根据url发送CORS
@@ -303,16 +311,50 @@ async function fetchAndUpdate() {
             isDragging = false;
         });
 
-        document.addEventListener('fullscreenchange', () => {
-            console.log(document.fullscreenElement);
-        });
     }
     else {
         updateContent(currentScore);
     }
+
+    chrome.storage.local.get('enableDarkMode', function(result) {
+        const isDarkMode = result.enableDarkMode;
+        if (isDarkMode) {
+            document.querySelector('.floating-text').setAttribute('theme', 'dark');
+        }
+        else {
+            document.querySelector('.floating-text').setAttribute('theme', 'light');
+        }
+    });
+
 }
 
-fetchAndUpdate();
+
+
+(async function (){
+    fetchAndUpdate();
+})();
+
+document.addEventListener('fullscreenchange', () => {
+    console.log(document.fullscreenElement);
+    var fullscreen = document.fullscreenElement;
+    var floating_text = document.querySelector('.floating-text');
+
+    if (fullscreen){
+        // 如果含有iframe
+        if (fullscreen.tagName.toLowerCase() == "iframe") {
+            var live_player = fullscreen.contentDocument.querySelector('div#live-player');
+            live_player.appendChild(floating_text);
+        }
+        else { 
+            fullscreen.appendChild(floating_text);
+        }
+    }
+    else {
+        document.body.appendChild(floating_text);
+    }
+    
+});
+
 //3秒后更新数据
 setTimeout(fetchAndUpdate, 3000);
 

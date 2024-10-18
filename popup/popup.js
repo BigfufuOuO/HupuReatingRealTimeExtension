@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.scripting.executeScript({
                 target: {tabId: tabs[0].id},
-                function: setThemeLight
+                function: setThemeLight,
             });
         });
         //将其checked属性加入

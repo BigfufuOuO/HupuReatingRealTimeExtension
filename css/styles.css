@@ -6,8 +6,24 @@
     padding: 2px;
 }
 
+.icons {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
 .header a, .header p {
     margin: 2px 0px;
+}
+
+.dark-mode-shift {
+    display: flex;
+    flex-direction: column;    
+    align-items: center;    
+    justify-content: center;    
+    height: 16px;    
+    text-align: center;
+    cursor: pointer;
 }
 
 .floating-text[theme="light"] {
